@@ -19,6 +19,7 @@
 // window dimensions
 GLint windowWidth = WIDTH;
 GLint windowHeight = HEIGHT;
+int fullscreen = 0;
 
 // Initial camera position
 GLfloat cameraPosition[] = { 0, 0.5, 5 };

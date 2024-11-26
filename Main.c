@@ -18,7 +18,25 @@ void myDisplay()
 }
 
 void myKey(unsigned char key, int x, int y) {
+	// User press 'q' to quit
+	if (key == 'q') {
+		printf("User press 'q'!\n");
+		exit(0);
+	}
 
+	// User press 'f' to toggle fullscreen on/off
+	if (key == 'f') {
+		printf("User press 'f'!\n");
+		if (!fullscreen) {
+			glutFullScreen();
+			fullscreen = 1;
+		}
+		else {
+			glutReshapeWindow(WIDTH, HEIGHT);
+			glutPositionWindow(100, 150);
+			fullscreen = 0;
+		}
+	}
 }
 
 void mySpecialKey(unsigned char key, int x, int y) {
