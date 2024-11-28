@@ -18,7 +18,7 @@
     <ClCompile Include="Main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Scene.c">
+    <ClCompile Include="Submarine.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -26,7 +26,7 @@
     <ClInclude Include="Main.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Scene.h">
+    <ClInclude Include="Submarine.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -132,11 +132,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Main.c" />
-    <ClCompile Include="Scene.c" />
+    <ClCompile Include="Submarine.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main.h" />
-    <ClInclude Include="Scene.h" />
+    <ClInclude Include="Submarine.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
