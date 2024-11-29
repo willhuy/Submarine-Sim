@@ -71,6 +71,8 @@ void myKey(unsigned char, int, int);
 
 void mySpecialKey(unsigned char, int, int);
 
+void myMouseMotion(int, int);
+
 void initializeGL();
 
 void myResize(int, int);

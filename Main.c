@@ -86,6 +86,10 @@ void myKey(unsigned char key, int x, int y) {
 	}
 }
 
+void myMouseMotion(int x, int y) {
+	printf("x: %d, y : %d\n", x, y);
+}
+
 void mySpecialKey(unsigned char key, int x, int y) {
 	
 }
@@ -211,6 +215,8 @@ void main(int argc, char** argv) {
 
 	// register special keyboard input function
 	glutSpecialFunc(mySpecialKey);
+
+	glutPassiveMotionFunc(myMouseMotion);
 
 	// Initialize OpenGL settings
 	initializeGL();
