@@ -12,7 +12,7 @@ void myDisplay()
 
 	// Set the camera position to look at the origin, with the Y-axis as up
 	gluLookAt(cameraPosition[0], cameraPosition[1], cameraPosition[2], 
-		cameraCenterX, cameraCenterY, cameraCenterZ, 
+		shipPosition[0], shipPosition[1], shipPosition[2],
 		0, 1, 0);
 
 	// position light 0
@@ -51,43 +51,72 @@ void myKey(unsigned char key, int x, int y) {
 
 	// Move camera up
 	if (key == 'q') {
-		cameraPosition[1] += CAMERA_INCREMENT;
-		cameraCenterY += CAMERA_INCREMENT;
+		cameraPosition[1] += SHIP_INCREMENT;
+		shipPosition[1]   += SHIP_INCREMENT;
 	}
 
 	// Move camera down
 	if (key == 'e') {
-		cameraPosition[1] -= CAMERA_INCREMENT;
-		cameraCenterY -= CAMERA_INCREMENT;
+		cameraPosition[1] -= SHIP_INCREMENT;
+		shipPosition[1]   -= SHIP_INCREMENT;
 	}
 
 	// Move camera left
 	if (key == 'a') {
-		cameraPosition[0] -= CAMERA_INCREMENT;
-		cameraCenterX -= CAMERA_INCREMENT;
+		cameraPosition[0] -= SHIP_INCREMENT;
+		shipPosition[0]   -= SHIP_INCREMENT;
 	}
 
 	// Move camera right
 	if (key == 'd') {
-		cameraPosition[0] += CAMERA_INCREMENT;
-		cameraCenterX += CAMERA_INCREMENT;
+		cameraPosition[0] += SHIP_INCREMENT;
+		shipPosition[0]   += SHIP_INCREMENT;
 	}
 
 	// Move camera foward
 	if (key == 'w') {
-		cameraPosition[2] -= CAMERA_INCREMENT;
-		cameraCenterZ -= CAMERA_INCREMENT;
+		cameraPosition[2] -= SHIP_INCREMENT;
+		shipPosition[2]   -= SHIP_INCREMENT;
 	}
 
 	// Move camera backward
 	if (key == 's') {
-		cameraPosition[2] += CAMERA_INCREMENT;
-		cameraCenterZ += CAMERA_INCREMENT;
+		cameraPosition[2] += SHIP_INCREMENT;
+		shipPosition[2]   += SHIP_INCREMENT;
 	}
+
+	glutPostRedisplay();
 }
 
 void myMouseMotion(int x, int y) {
 	printf("x: %d, y : %d\n", x, y);
+
+	if (lastMouseX == -1 && lastMouseY == -1) {
+		// First call, initialize the last mouse position
+		lastMouseX = x;
+		lastMouseY = y;
+		return;
+	}
+
+	// Calculate movement delta
+	float dx = (float)(x - lastMouseX);
+	float dy = (float)(y - lastMouseY);
+
+	// Update vertical and horizontal angle based on deltas
+	horizontalAngle += dx * horizontalSensitivity;
+	verticalAngle += dy * verticalSensitivity;
+
+	// Update the camera position
+	cameraPosition[0] = shipPosition[0] + cameraRadius * cosf(verticalAngle * PI / 180.0f) * sinf(horizontalAngle * PI / 180.0f);
+	cameraPosition[1] = shipPosition[1] + cameraRadius * sinf(verticalAngle * PI / 180.0f);
+	cameraPosition[2] = shipPosition[2] + cameraRadius * cosf(verticalAngle * PI / 180.0f) * cosf(horizontalAngle * PI / 180.0f);
+
+	// Update last mouse position
+	lastMouseX = x;
+	lastMouseY = y;
+
+	// Request a redraw of the scene
+	glutPostRedisplay();
 }
 
 void mySpecialKey(unsigned char key, int x, int y) {
@@ -239,9 +268,9 @@ void initScene() {
 	cameraPosition[0] = 0.0f;
 	cameraPosition[1] = 50.0f;
 	cameraPosition[2] = 50.0f;
-	cameraCenterX = 0;
-	cameraCenterY = 0;
-	cameraCenterZ = 0;
+	shipPosition[0]   = 0.0f;
+	shipPosition[1]	  = 5.0f;
+	shipPosition[2]   = 5.0f;
 }
 
 void renderCoorAxis() {
@@ -261,19 +290,19 @@ void renderCoorAxis() {
 	setMaterialHelper(redDiffuse, zeroMaterial, zeroMaterial, noShininess);
 	glNormal3f(1.0, 0.0, 0.0);
 	glVertex3f(0.0f, 0.0f, 0.0f);
-	glVertex3f(5.0f, 0.0f, 0.0f);
+	glVertex3f(10.0f, 0.0f, 0.0f);
 
-	// Y axis with bkue material
+	// Y axis with blue material
 	setMaterialHelper(greenDiffuse, zeroMaterial, zeroMaterial, noShininess);
 	glNormal3f(1.0f, 0.0f, 0.0f);
 	glVertex3f(0.0f, 0.0f, 0.0f);
-	glVertex3f(0.0f, 5.0f, 0.0f);
+	glVertex3f(0.0f, 10.0f, 0.0f);
 
 	// Z axis
 	setMaterialHelper(blueDiffuse, zeroMaterial, zeroMaterial, noShininess);
 	glNormal3f(1.0f, 0.0f, 0.0f);
 	glVertex3f(0.0f, 0.0f, 0.0f);
-	glVertex3f(0.0f, 0.0f, 5.0f);
+	glVertex3f(0.0f, 0.0f, 10.0f);
 
 	glEnd();
 	glPopMatrix();
@@ -283,8 +312,8 @@ void renderSubmarine() {
 	glPushMatrix();
 
 	// This will make the ship move with camera
+	glTranslatef(shipPosition[0], shipPosition[1], shipPosition[2]);
 	glScalef(0.05f, 0.05f, 0.05f);
-	glTranslatef(cameraCenterX * 20, cameraCenterY * 20, cameraCenterZ * 20);
 	glRotatef(-90, 0, 1, 0);
 
 	// Set the ship material to yellow and render

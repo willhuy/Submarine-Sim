@@ -14,17 +14,25 @@
 #define HEIGHT 600
 #define Z_NEAR 0.1f 
 #define Z_FAR 10000.0f
-#define CAMERA_INCREMENT 0.9f
+#define SHIP_INCREMENT 0.9f
+#define CAMERA_DISTANCE_FROM_SUBMARINE 10.0f
+#define PI 3.14159265358979323846
 
 // Scene related macros
 #define AXIS_WIDTH 5.0f
 #define Z_SUBDIVISION 100
 
-// Initial camera position
+// Initial camera position and parameters for camera transformation
 GLfloat cameraPosition[3];
-GLdouble cameraCenterX;
-GLdouble cameraCenterY;
-GLdouble cameraCenterZ;
+GLfloat shipPosition[3];
+GLfloat distanceFromSubmarine;
+GLfloat verticalAngle;
+GLfloat horizontalAngle;
+GLfloat horizontalSensitivity = 0.3f;
+GLfloat verticalSensitivity = 0.3f;
+GLfloat cameraRadius = 50.0f;
+int lastMouseX = -1;
+int lastMouseY = -1;
 
 //  position the light source directly on top of origin
 GLfloat lightPosition[] = { 1.0, 1.0, 1.0, 0.0 };
