@@ -134,6 +134,7 @@ void update() {
 }
 
 void initializeGL() {
+
 	// enable texture 2D
 	glEnable(GL_TEXTURE_2D);
 
@@ -298,6 +299,15 @@ void renderScene() {
 	// render quadrics
 	renderQuadrics();
 
+	// render fog
+	if (fogOn) {
+		glEnable(GL_FOG);
+		renderFog();
+	}
+	else {
+		glDisable(GL_FOG);
+	}
+
 	// render submarine
 	renderSubmarine();
 }
@@ -349,6 +359,7 @@ void renderQuadrics() {
 		gluQuadricDrawStyle(disk, GLU_FILL);
 	}
 
+	// Quadrics shouldn't be affect by lighting
 	gluQuadricNormals(cylinder, GLU_NONE);
 	gluQuadricNormals(disk, GLU_NONE);
 
@@ -397,4 +408,10 @@ void renderSubmarine() {
 	}
 
 	glPopMatrix();
+}
+
+void renderFog() {
+	glFogf(GL_FOG_MODE, GL_EXP);
+	glFogf(GL_FOG_DENSITY, 0.007);
+	glFogfv(GL_FOG_COLOR, fogColor);
 }

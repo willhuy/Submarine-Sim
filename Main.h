@@ -81,8 +81,9 @@ GLint windowWidth = WIDTH;
 GLint windowHeight = HEIGHT;
 int fullscreen = 0;
 
-// fog
+// fog related variables
 int fogOn = 1;
+GLfloat fogColor[] = { 0.0, 0.0, 1.0, 1.0 };
 
 void printMenu();
 
@@ -107,6 +108,8 @@ void renderScene();
 void renderCoorAxis();
 
 void renderQuadrics();
+
+void renderFog();
 
 void renderSubmarine();
 
