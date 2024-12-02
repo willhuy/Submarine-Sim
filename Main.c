@@ -18,11 +18,8 @@ void myDisplay()
 	// position light 0
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 
-	// Render scene axis
-	renderCoorAxis();
-
-	// render submarine
-	renderSubmarine();
+	// Render scene
+	renderScene();
 
 	// Swap the double buffers
 	glutSwapBuffers();
@@ -47,6 +44,17 @@ void myKey(unsigned char key, int x, int y) {
 			glutPositionWindow(100, 150);
 			fullscreen = 0;
 		}
+	}
+
+	// Toggle quadric render mode
+	if (key == 'u') {
+		isWireFrame = !isWireFrame;
+	}
+
+	// Toggle fog
+
+	if (key == 'b') {
+		fogOn = !fogOn;
 	}
 
 	// Move camera up
@@ -89,8 +97,6 @@ void myKey(unsigned char key, int x, int y) {
 }
 
 void myMouseMotion(int x, int y) {
-	printf("x: %d, y : %d\n", x, y);
-
 	if (lastMouseX == -1 && lastMouseY == -1) {
 		// First call, initialize the last mouse position
 		lastMouseX = x;
@@ -115,7 +121,6 @@ void myMouseMotion(int x, int y) {
 	lastMouseX = x;
 	lastMouseY = y;
 
-	// Request a redraw of the scene
 	glutPostRedisplay();
 }
 
@@ -129,6 +134,18 @@ void update() {
 }
 
 void initializeGL() {
+	// enable texture 2D
+	glEnable(GL_TEXTURE_2D);
+
+	// define texture id
+	glGenTextures(1, &sandTextureID);
+	glBindTexture(GL_TEXTURE_2D, sandTextureID);
+
+	// mipmap builder
+	gluBuild2DMipmaps(GL_TEXTURE_2D, 3, imageWidth, imageHeight, GL_RGB, GL_UNSIGNED_BYTE, imageData);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
 	// enable lighting 
 	glEnable(GL_LIGHTING);
 	// define the light color and intensity
@@ -178,7 +195,7 @@ void myResize(int newWidth, int newHeight) {
 	glLoadIdentity();
 
 	// gluPerspective(fovy, aspect, near, far)
-	gluPerspective(45, (float)windowWidth / (float)windowHeight, Z_NEAR, Z_FAR);
+	gluPerspective(100, (float)windowWidth / (float)windowHeight, Z_NEAR, Z_FAR);
 
 	// change into model-view mode so that we can change the object positions
 	glMatrixMode(GL_MODELVIEW);
@@ -213,7 +230,10 @@ void main(int argc, char** argv) {
 	// Load the submarine object file
 	loadSubmarine("object_files/submarine.obj");
 
-	// Initialize the scene
+	// Load sand texture
+	loadTexture("object_files/sand_ascii.ppm");
+
+	// Initiallize the sim scene
 	initScene();
 
 	// Set the seed for rand() function
@@ -263,21 +283,30 @@ void setMaterialHelper(GLfloat diffuse[], GLfloat specular[], GLfloat ambient[],
 
 void initScene() {
 	originBall = gluNewQuadric();
+	cylinder   = gluNewQuadric();
+	disk       = gluNewQuadric();
 
-	// Init camera position
-	cameraPosition[0] = 0.0f;
-	cameraPosition[1] = 50.0f;
-	cameraPosition[2] = 50.0f;
-	shipPosition[0]   = 0.0f;
-	shipPosition[1]	  = 5.0f;
-	shipPosition[2]   = 5.0f;
+	gluQuadricTexture(cylinder, GL_TRUE);
+	gluQuadricTexture(disk, GL_TRUE);
+}
+
+void renderScene() {
+	
+	// render axis
+	renderCoorAxis();
+
+	// render quadrics
+	renderQuadrics();
+
+	// render submarine
+	renderSubmarine();
 }
 
 void renderCoorAxis() {
 
 	// white diffuse ball
-	setMaterialHelper(whiteDiffuse, zeroMaterial, zeroMaterial, noShininess);
-	gluSphere(originBall, 0.1f, Z_SUBDIVISION, Z_SUBDIVISION);
+	setMaterialHelper(white, zeroMaterial, zeroMaterial, noShininess);
+	gluSphere(originBall, 1.0f, Z_SUBDIVISION, Z_SUBDIVISION);
 
 	// Set line width
 	glLineWidth(AXIS_WIDTH);
@@ -287,19 +316,19 @@ void renderCoorAxis() {
 	glBegin(GL_LINES);
 
 	// X axis with red material
-	setMaterialHelper(redDiffuse, zeroMaterial, zeroMaterial, noShininess);
+	setMaterialHelper(red, zeroMaterial, zeroMaterial, noShininess);
 	glNormal3f(1.0, 0.0, 0.0);
 	glVertex3f(0.0f, 0.0f, 0.0f);
 	glVertex3f(10.0f, 0.0f, 0.0f);
 
 	// Y axis with blue material
-	setMaterialHelper(greenDiffuse, zeroMaterial, zeroMaterial, noShininess);
+	setMaterialHelper(green, zeroMaterial, zeroMaterial, noShininess);
 	glNormal3f(1.0f, 0.0f, 0.0f);
 	glVertex3f(0.0f, 0.0f, 0.0f);
 	glVertex3f(0.0f, 10.0f, 0.0f);
 
 	// Z axis
-	setMaterialHelper(blueDiffuse, zeroMaterial, zeroMaterial, noShininess);
+	setMaterialHelper(blue, zeroMaterial, zeroMaterial, noShininess);
 	glNormal3f(1.0f, 0.0f, 0.0f);
 	glVertex3f(0.0f, 0.0f, 0.0f);
 	glVertex3f(0.0f, 0.0f, 10.0f);
@@ -308,16 +337,50 @@ void renderCoorAxis() {
 	glPopMatrix();
 }
 
-void renderSubmarine() {
+void renderQuadrics() {
+
+	// set quadric render mode
+	if (isWireFrame) {
+		gluQuadricDrawStyle(cylinder, GLU_LINE);
+		gluQuadricDrawStyle(disk, GLU_LINE);
+	}
+	else {
+		gluQuadricDrawStyle(cylinder, GLU_FILL);
+		gluQuadricDrawStyle(disk, GLU_FILL);
+	}
+
+	gluQuadricNormals(cylinder, GLU_NONE);
+	gluQuadricNormals(disk, GLU_NONE);
+
+
 	glPushMatrix();
 
+	// Both the disk and cylinder need to be rotate in x direction
+	glRotatef(-90, 1, 0, 0);
+
+	// cylinder
+	setMaterialHelper(zeroMaterial, neutral, zeroMaterial, noShininess);
+	glMaterialfv(GL_FRONT, GL_EMISSION, emissionCylinder);
+	gluCylinder(cylinder, 100, 100, 100, 50, 30);
+
+	// disk
+	setMaterialHelper(zeroMaterial, neutral, zeroMaterial, noShininess);
+	glMaterialfv(GL_FRONT, GL_EMISSION, emissionDisk);
+	gluDisk(disk, 0, 100, 50, 1);
+
+	glPopMatrix();
+}
+
+void renderSubmarine() {
+	glPushMatrix();
+	
 	// This will make the ship move with camera
 	glTranslatef(shipPosition[0], shipPosition[1], shipPosition[2]);
 	glScalef(0.05f, 0.05f, 0.05f);
 	glRotatef(-90, 0, 1, 0);
 
 	// Set the ship material to yellow and render
-	setMaterialHelper(yellowDiffuse, zeroMaterial, zeroMaterial, noShininess);
+	setMaterialHelper(yellow, zeroMaterial, zeroMaterial, noShininess);
 	for (int i = 0; i < facesCount; i++) {
 
 		// Each vertices has its own normal for smooth shading;

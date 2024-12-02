@@ -6,7 +6,7 @@
 #include <time.h>
 #include <math.h>
 
-#include "Submarine.h"
+#include "FileIO.h"
 
 // GLUT related macros
 #define FRAME_EXIST_TIME 1000 / 60
@@ -23,44 +23,54 @@
 #define Z_SUBDIVISION 100
 
 // Initial camera position and parameters for camera transformation
-GLfloat cameraPosition[3];
-GLfloat shipPosition[3];
+GLfloat cameraPosition[3] = {0.0f, 50.0f, 50.0f};
+GLfloat shipPosition[3]   = {0.0f, 5.0f, 5.0f};
 GLfloat distanceFromSubmarine;
 GLfloat verticalAngle;
 GLfloat horizontalAngle;
 GLfloat horizontalSensitivity = 0.3f;
 GLfloat verticalSensitivity = 0.3f;
-GLfloat cameraRadius = 50.0f;
+GLfloat cameraRadius = 30.0f;
 int lastMouseX = -1;
 int lastMouseY = -1;
 
 //  position the light source directly on top of origin
 GLfloat lightPosition[] = { 1.0, 1.0, 1.0, 0.0 };
 
-// white ball at origin
+// All quadrics in the scene
 GLUquadric* originBall;
+GLUquadric* cylinder;
+GLUquadric* disk;
+int isWireFrame = 0;
 
-
-/* -- different type of materials -- */
+/* different type of materials  */
 
 // a material that is all zeros
 GLfloat zeroMaterial[] = { 0.0, 0.0, 0.0, 1.0 };
 
 // a blue diffuse material
-GLfloat blueDiffuse[] = { 0.1, 0.5, 0.8, 1.0 };
+GLfloat blue[] = { 0.0, 0.0, 1.0, 1.0 };
 
 // a red diffuse material
-GLfloat redDiffuse[] = { 1.0, 0.0, 0.0, 1.0 };
+GLfloat red[] = { 1.0, 0.0, 0.0, 1.0 };
 
 // a green diffuse material
-GLfloat greenDiffuse[] = { 0.0, 1.0, 0.0, 1.0 };
+GLfloat green[] = { 0.0, 1.0, 0.0, 1.0 };
 
 // a white diffuse material
-GLfloat whiteDiffuse[] = { 1.0, 1.0, 1.0, 1.0 };
+GLfloat white[] = { 1.0, 1.0, 1.0, 1.0 };
 
 // a yellow diffuse material for submarine
-GLfloat yellowDiffuse[] = { 1.0, 1.0, 0.0, 1.0 };
+GLfloat yellow[] = { 1.0, 1.0, 0.0, 1.0 };
 
+// a neutral material for texture object
+GLfloat neutral[] = { 0.5, 0.5, 0.5, 1.0 };
+
+// a emissive material for disk object
+GLfloat emissionDisk[] = { 0.3, 0.3, 0.0, 1.0 };
+
+// a emissive material for cylinder object
+GLfloat emissionCylinder[] = { 0.1, 0.1, 0.0, 1.0 };
 
 // shininess
 GLfloat noShininess = 0.0;
@@ -70,6 +80,9 @@ GLfloat highShininess = 100.0;
 GLint windowWidth = WIDTH;
 GLint windowHeight = HEIGHT;
 int fullscreen = 0;
+
+// fog
+int fogOn = 1;
 
 void printMenu();
 
@@ -83,13 +96,17 @@ void myMouseMotion(int, int);
 
 void initializeGL();
 
+void initScene();
+
 void myResize(int, int);
 
 void update();
 
+void renderScene();
+
 void renderCoorAxis();
 
-void initScene();
+void renderQuadrics();
 
 void renderSubmarine();
 
