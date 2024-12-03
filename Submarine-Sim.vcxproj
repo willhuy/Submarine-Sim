@@ -131,11 +131,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Boid.c" />
     <ClCompile Include="Main.c" />
     <ClCompile Include="FileIO.c" />
     <ClCompile Include="Wave.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Boid.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="FileIO.h" />
     <ClInclude Include="Wave.h" />

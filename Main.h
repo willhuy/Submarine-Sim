@@ -8,6 +8,7 @@
 
 #include "FileIO.h"
 #include "Wave.h"
+#include "Boid.h"
 
 // GLUT related macros
 #define FRAME_EXIST_TIME 1000 / 60
@@ -43,6 +44,12 @@ GLUquadric* originBall;
 GLUquadric* cylinder;
 GLUquadric* disk;
 int isWireFrame = 0;
+
+// Boid related variables
+float base = 2.0f;
+float height = 3.0f;
+float baseVertices[4][3];
+float topVertices[3];
 
 /* different type of materials  */
 
@@ -123,6 +130,8 @@ void renderQuadrics();
 void renderFog();
 
 void renderWave();
+
+void renderBoids();
 
 void renderSubmarine();
 

@@ -264,6 +264,9 @@ void main(int argc, char** argv) {
 	// Load sand texture
 	loadTexture("object_files/sand_ascii.ppm");
 
+	// Init boids
+	initializeBoids();
+
 	// Initiallize the sim scene
 	initScene();
 
@@ -314,6 +317,29 @@ void setMaterialHelper(GLfloat diffuse[], GLfloat specular[], GLfloat ambient[],
 
 void initScene() {
 
+	// boid
+
+	baseVertices[0][0] = -base / 2.0f;
+	baseVertices[0][1] = 0.0f;
+	baseVertices[0][2] = -base / 2.0f;
+
+	baseVertices[1][0] = base / 2.0f;
+	baseVertices[1][1] = 0.0f;
+	baseVertices[1][2] = -base / 2.0f;
+
+	baseVertices[2][0] = base / 2.0f;
+	baseVertices[2][1] = 0.0f;
+	baseVertices[2][2] = base / 2.0f;
+
+	baseVertices[3][0] = -base / 2.0f;
+	baseVertices[3][1] = 0.0f;
+	baseVertices[3][2] = base / 2.0f;
+
+	topVertices[0] = 0.0f;
+	topVertices[1] = height;
+	topVertices[2] = 0.0f;
+
+
 	// wave
 	initializeWave();
 
@@ -349,6 +375,9 @@ void renderScene() {
 	// render wave
 	renderWave();
 
+	// render boid
+	renderBoids();
+
 	// render corals
 	renderCorals(coral1Vertices, coral1VerticesNormal, coral1Faces, coral1FacesCount, 30.0f, 0.0f, 30.0f, 20.0f, 20.0f, 20.0f);
 	renderCorals(coral2Vertices, coral2VerticesNormal, coral2Faces, coral2FacesCount, -28.0f, 0.0f, -29.0f, 30.0f, 30.0f, 30.0f);
@@ -364,6 +393,36 @@ void renderScene() {
 	renderCorals(coral12Vertices, coral12VerticesNormal, coral12Faces, coral12FacesCount, 60.0f, 0.0f, -60.0f, 40.0f, 40.0f, 40.0f);
 	renderCorals(coral13Vertices, coral13VerticesNormal, coral13Faces, coral13FacesCount, -45.0f, 0.0f, -45.0f, 40.0f, 40.0f, 40.0f);
 	renderCorals(coral14Vertices, coral14VerticesNormal, coral14Faces, coral14FacesCount, -30.0f, 0.0f, 60.0f, 40.0f, 40.0f, 40.0f);
+}
+
+void renderBoids() {
+
+	for (int boidIndex = 0; boidIndex < FLOCK_SIZE; boidIndex++) {
+		glPushMatrix();
+		glTranslatef(currentFlock[boidIndex].position[0], currentFlock[boidIndex].position[1], currentFlock[boidIndex].position[2]);
+
+		glBegin(GL_TRIANGLES);
+
+		// 4 Side triangles
+		for (int i = 0; i < 4; i++) {
+			int next = (i + 1) % 4;
+			glVertex3fv(topVertices);            
+			glVertex3fv(baseVertices[i]); 
+			glVertex3fv(baseVertices[next]);
+		}
+
+		// square on the bottom
+		glVertex3fv(baseVertices[0]);
+		glVertex3fv(baseVertices[1]);
+		glVertex3fv(baseVertices[2]);
+
+		glVertex3fv(baseVertices[0]);
+		glVertex3fv(baseVertices[2]);
+		glVertex3fv(baseVertices[3]);
+
+		glEnd();
+		glPopMatrix();
+	}
 }
 
 // Render the grid as a wireframe
