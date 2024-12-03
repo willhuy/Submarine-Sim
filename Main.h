@@ -7,6 +7,7 @@
 #include <math.h>
 
 #include "FileIO.h"
+#include "Wave.h"
 
 // GLUT related macros
 #define FRAME_EXIST_TIME 1000 / 60
@@ -24,7 +25,7 @@
 
 // Initial camera position and parameters for camera transformation
 GLfloat cameraPosition[3] = {0.0f, 50.0f, 50.0f};
-GLfloat shipPosition[3]   = {0.0f, 5.0f, 5.0f};
+GLfloat shipPosition[3]   = {0.0f, 40.0f, 10.0f};
 GLfloat distanceFromSubmarine;
 GLfloat verticalAngle;
 GLfloat horizontalAngle;
@@ -72,6 +73,16 @@ GLfloat emissionDisk[] = { 0.3, 0.3, 0.0, 1.0 };
 // a emissive material for cylinder object
 GLfloat emissionCylinder[] = { 0.1, 0.1, 0.0, 1.0 };
 
+
+/* For wave */
+
+// a emissive material for wave (water)
+GLfloat emissionWave[] = { 0.0, 0.0, 0.1, 1.0 };
+
+// a blue water material
+GLfloat blueWater[] = { 0.0, 0.0, 1.0, 1.0 };
+
+
 // shininess
 GLfloat noShininess = 0.0;
 GLfloat highShininess = 100.0;
@@ -110,6 +121,8 @@ void renderCoorAxis();
 void renderQuadrics();
 
 void renderFog();
+
+void renderWave();
 
 void renderSubmarine();
 

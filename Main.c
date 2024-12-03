@@ -129,6 +129,8 @@ void mySpecialKey(unsigned char key, int x, int y) {
 }
 
 void update() {
+	waveDelta += WAVE_SPEED;
+	updateWave();
 	glutPostRedisplay();
 	glutTimerFunc(FRAME_EXIST_TIME, update, 0);
 }
@@ -137,6 +139,10 @@ void initializeGL() {
 
 	// enable texture 2D
 	glEnable(GL_TEXTURE_2D);
+
+	glEnable(GL_BLEND);
+
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// define texture id
 	glGenTextures(1, &sandTextureID);
@@ -215,6 +221,7 @@ void printMenu() {
 	printf("E: Move up\n");
 	printf("----------------------\n");
 	printf("U: Wireframe toggle\n");
+	printf("B: Fog toggle\n");
 	printf("----------------------\n");
 	printf("B: Boid Circling (Method 1)\n");
 	printf("N: Boid Swimming (Method 2)\n");
@@ -283,6 +290,11 @@ void setMaterialHelper(GLfloat diffuse[], GLfloat specular[], GLfloat ambient[],
 }
 
 void initScene() {
+
+	// wave
+	initializeWave();
+
+	// quadrics
 	originBall = gluNewQuadric();
 	cylinder   = gluNewQuadric();
 	disk       = gluNewQuadric();
@@ -310,6 +322,45 @@ void renderScene() {
 
 	// render submarine
 	renderSubmarine();
+
+	// render wave
+	renderWave();
+}
+
+// Render the grid as a wireframe
+void renderWave() {
+
+	glTranslatef(0, 98, 0);
+	glScalef(5, 5, 5);
+
+	setMaterialHelper(blueWater, zeroMaterial, zeroMaterial, noShininess);
+	glMaterialfv(GL_FRONT, GL_EMISSION, emissionWave);
+	for (int i = 0; i < WAVE_GRID_SIZE - 1; i++) {
+		for (int j = 0; j < WAVE_GRID_SIZE - 1; j++) {
+
+			// Draw two triangles (cause square)
+			glBegin(GL_TRIANGLES);
+
+				// First
+				glNormal3f(1.0f, 0.0f, 0.0f);
+				glVertex3fv(waveVertices[i][j]);
+				glNormal3f(1.0f, 0.0f, 0.0f);
+				glVertex3fv(waveVertices[i + 1][j]);
+				glNormal3f(1.0f, 0.0f, 0.0f);
+				glVertex3fv(waveVertices[i][j + 1]);
+
+				// Second
+				glNormal3f(1.0f, 0.0f, 0.0f);
+				glVertex3fv(waveVertices[i + 1][j]);
+				glNormal3f(1.0f, 0.0f, 0.0f);
+				glVertex3fv(waveVertices[i][j + 1]);
+				glNormal3f(1.0f, 0.0f, 0.0f);
+				glVertex3fv(waveVertices[i + 1][j + 1]);
+
+			glEnd();
+		}
+	}
+
 }
 
 void renderCoorAxis() {
@@ -326,25 +377,27 @@ void renderCoorAxis() {
 	glBegin(GL_LINES);
 
 	// X axis with red material
-	setMaterialHelper(red, zeroMaterial, zeroMaterial, noShininess);
+	setMaterialHelper(red, zeroMaterial, zeroMaterial, highShininess);
 	glNormal3f(1.0, 0.0, 0.0);
 	glVertex3f(0.0f, 0.0f, 0.0f);
 	glVertex3f(10.0f, 0.0f, 0.0f);
 
 	// Y axis with blue material
-	setMaterialHelper(green, zeroMaterial, zeroMaterial, noShininess);
+	setMaterialHelper(green, zeroMaterial, zeroMaterial, highShininess);
 	glNormal3f(1.0f, 0.0f, 0.0f);
 	glVertex3f(0.0f, 0.0f, 0.0f);
 	glVertex3f(0.0f, 10.0f, 0.0f);
 
 	// Z axis
-	setMaterialHelper(blue, zeroMaterial, zeroMaterial, noShininess);
+	setMaterialHelper(blue, zeroMaterial, zeroMaterial, highShininess);
 	glNormal3f(1.0f, 0.0f, 0.0f);
 	glVertex3f(0.0f, 0.0f, 0.0f);
 	glVertex3f(0.0f, 0.0f, 10.0f);
 
 	glEnd();
 	glPopMatrix();
+
+	glLineWidth(1);
 }
 
 void renderQuadrics() {
@@ -391,7 +444,7 @@ void renderSubmarine() {
 	glRotatef(-90, 0, 1, 0);
 
 	// Set the ship material to yellow and render
-	setMaterialHelper(yellow, zeroMaterial, zeroMaterial, noShininess);
+	setMaterialHelper(yellow, zeroMaterial, zeroMaterial, highShininess);
 	for (int i = 0; i < facesCount; i++) {
 
 		// Each vertices has its own normal for smooth shading;

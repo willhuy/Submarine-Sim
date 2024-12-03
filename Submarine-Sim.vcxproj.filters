@@ -21,12 +21,18 @@
     <ClCompile Include="FileIO.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Wave.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="FileIO.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Wave.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
