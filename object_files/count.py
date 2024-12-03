@@ -15,7 +15,7 @@ def count_obj_elements(file_path):
 # Example usage
 if __name__ == "__main__":
     #file_path = input("Enter the path to the OBJ file: ").strip()
-    counts = count_obj_elements("D:/DAL/3rdYear/csci3161/FinalProject/Submarine-Sim/object_files/submarine.obj")
+    counts = count_obj_elements("D:/DAL/3rdYear/csci3161/FinalProject/Submarine-Sim/object_files/coral/coral_14.obj")
     print(f"Counts in file:")
     print(f"Vertices (v): {counts['v']}")
     print(f"Vertex Normals (vn): {counts['vn']}")

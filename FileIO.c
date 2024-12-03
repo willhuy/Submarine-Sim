@@ -1,16 +1,16 @@
 #include "FileIO.h"
 
-void loadSubmarine(const char* fileName) {
+void loadObj(const char* fileName, float vertices[][3], float verticesNormal[][3], int faces[][6], int* objFacesCount) {
     FILE* file = fopen(fileName, "r");
 
     if (!file) {
-        printf("Could not open file\n");
+        printf("Could not open file %s\n", fileName);
         exit(1);
     }
 
     vertexCount = 0;
     vertexNormalCount = 0;
-    facesCount = 0;
+    int facesCount = 0;
 
     char line[128];
     while (fgets(line, sizeof(line), file)) {
@@ -30,6 +30,8 @@ void loadSubmarine(const char* fileName) {
             facesCount++;
         }
     }
+
+	*objFacesCount = facesCount;
 
     fclose(file);
 }

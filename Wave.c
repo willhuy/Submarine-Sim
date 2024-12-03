@@ -21,7 +21,16 @@ void updateWave() {
 
             // Move along z axis
             float z = waveVertices[i][j][2];
-            float valueBasedOnPosition = z;
+            float x = 0.0f;
+
+            // Add some random on which axis the wave traverse
+            if (i % 3 == 0) {
+                x = waveVertices[i][j][0];
+            }
+            else {
+                x = 0.0f;
+            }
+            float valueBasedOnPosition = z + x;
             waveVertices[i][j][1] = sin(valueBasedOnPosition + wavePhase + waveDelta) * waveAmplitude;
         }
 

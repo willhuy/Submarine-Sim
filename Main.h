@@ -126,4 +126,7 @@ void renderWave();
 
 void renderSubmarine();
 
+void renderCorals(float vertices[][3], float verticesNormal[][3], int faces[][6], int coralFacesCount,
+	float translateX, float translateY, float translateZ, float scaleX, float scaleY, float scaleZ);
+
 void setMaterialHelper(GLfloat[], GLfloat[], GLfloat[], GLfloat);

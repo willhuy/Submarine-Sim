@@ -5,7 +5,7 @@
 #include <time.h>
 
 // Wave related macros
-#define WAVE_GRID_SIZE 100
+#define WAVE_GRID_SIZE 50
 #define WAVE_AMPLITUDE 1.5f
 #define WAVE_SPEED 0.05f
 #define WAVE_PHASE 0.5f

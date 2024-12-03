@@ -49,6 +49,12 @@ void myKey(unsigned char key, int x, int y) {
 	// Toggle quadric render mode
 	if (key == 'u') {
 		isWireFrame = !isWireFrame;
+		if (isWireFrame) {
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
+		else {
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		}
 	}
 
 	// Toggle fog
@@ -161,7 +167,7 @@ void initializeGL() {
 	GLfloat specularLight[] = { 1.0, 1.0, 1.0, 1.0 };
 
 	//  the global ambient light level
-	GLfloat globalAmbientLight[] = { 0.4, 0.4, 0.4, 1.0 };
+	GLfloat globalAmbientLight[] = { 1.0, 1.0, 1.0, 1.0 };
 
 	// set the global ambient light level
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globalAmbientLight);
@@ -189,6 +195,7 @@ void myResize(int newWidth, int newHeight) {
 	
 	// update the new width
 	windowWidth = newWidth;
+
 	// update the new height
 	windowHeight = newHeight;
 
@@ -236,7 +243,23 @@ void main(int argc, char** argv) {
 	printMenu();
 
 	// Load the submarine object file
-	loadSubmarine("object_files/submarine.obj");
+	loadObj("object_files/submarine.obj", vertices, verticesNormal, faces, &subFacesCount);
+
+	// Load corals
+	loadObj("object_files/coral/coral_1.obj",  coral1Vertices, coral1VerticesNormal, coral1Faces, &coral1FacesCount);
+	loadObj("object_files/coral/coral_2.obj",  coral2Vertices, coral2VerticesNormal, coral2Faces, &coral2FacesCount);
+	loadObj("object_files/coral/coral_3.obj",  coral3Vertices, coral3VerticesNormal, coral3Faces, &coral3FacesCount);
+	loadObj("object_files/coral/coral_4.obj",  coral4Vertices, coral4VerticesNormal, coral4Faces, &coral4FacesCount);
+	loadObj("object_files/coral/coral_5.obj",  coral5Vertices, coral5VerticesNormal, coral5Faces, &coral5FacesCount);
+	loadObj("object_files/coral/coral_6.obj",  coral6Vertices, coral6VerticesNormal, coral6Faces, &coral6FacesCount);
+	loadObj("object_files/coral/coral_7.obj",  coral7Vertices, coral7VerticesNormal, coral7Faces, &coral7FacesCount);
+	loadObj("object_files/coral/coral_8.obj",  coral8Vertices, coral8VerticesNormal, coral8Faces, &coral8FacesCount);
+	loadObj("object_files/coral/coral_9.obj",  coral9Vertices, coral9VerticesNormal, coral9Faces, &coral9FacesCount);
+	loadObj("object_files/coral/coral_10.obj", coral10Vertices, coral10VerticesNormal, coral10Faces, &coral10FacesCount);
+	loadObj("object_files/coral/coral_11.obj", coral11Vertices, coral11VerticesNormal, coral11Faces, &coral11FacesCount);
+	loadObj("object_files/coral/coral_12.obj", coral12Vertices, coral12VerticesNormal, coral12Faces, &coral12FacesCount);
+	loadObj("object_files/coral/coral_13.obj", coral13Vertices, coral13VerticesNormal, coral13Faces, &coral13FacesCount);
+	loadObj("object_files/coral/coral_14.obj", coral14Vertices, coral14VerticesNormal, coral14Faces, &coral14FacesCount);
 
 	// Load sand texture
 	loadTexture("object_files/sand_ascii.ppm");
@@ -325,12 +348,29 @@ void renderScene() {
 
 	// render wave
 	renderWave();
+
+	// render corals
+	renderCorals(coral1Vertices, coral1VerticesNormal, coral1Faces, coral1FacesCount, 30.0f, 0.0f, 30.0f, 20.0f, 20.0f, 20.0f);
+	renderCorals(coral2Vertices, coral2VerticesNormal, coral2Faces, coral2FacesCount, -28.0f, 0.0f, -29.0f, 30.0f, 30.0f, 30.0f);
+	renderCorals(coral3Vertices, coral3VerticesNormal, coral3Faces, coral3FacesCount, 30.0f, 0.0f, -20.0f, 40.0f, 40.0f, 40.0f);
+	renderCorals(coral4Vertices, coral4VerticesNormal, coral4Faces, coral4FacesCount, -30.0f, 0.0f, 29.0f, 40.0f, 40.0f, 40.0f);
+	renderCorals(coral5Vertices, coral5VerticesNormal, coral5Faces, coral5FacesCount, 20.0f, 0.0f, 60.0f, 40.0f, 40.0f, 40.0f);
+	renderCorals(coral6Vertices, coral6VerticesNormal, coral6Faces, coral6FacesCount, -40.0f, 0.0f, -60.0f, 40.0f, 40.0f, 40.0f);
+	renderCorals(coral7Vertices, coral7VerticesNormal, coral7Faces, coral7FacesCount, 60.0f, -0.0f, 0.0f, 40.0f, 40.0f, 40.0f);
+	renderCorals(coral8Vertices, coral8VerticesNormal, coral8Faces, coral8FacesCount, -60.0f, 0.0f, 1.0f, 40.0f, 40.0f, 40.0f);
+	renderCorals(coral9Vertices, coral9VerticesNormal, coral9Faces, coral9FacesCount, 1.0f, 0.0f, -60.0f, 40.0f, 40.0f, 40.0f);
+	renderCorals(coral10Vertices, coral10VerticesNormal, coral10Faces, coral10FacesCount, 1.0f, 0.0f, 30.0f, 40.0f, 40.0f, 40.0f);
+	renderCorals(coral11Vertices, coral11VerticesNormal, coral11Faces, coral11FacesCount, -60.0f, 0.0f, 60.0f, 40.0f, 40.0f, 40.0f);
+	renderCorals(coral12Vertices, coral12VerticesNormal, coral12Faces, coral12FacesCount, 60.0f, 0.0f, -60.0f, 40.0f, 40.0f, 40.0f);
+	renderCorals(coral13Vertices, coral13VerticesNormal, coral13Faces, coral13FacesCount, -45.0f, 0.0f, -45.0f, 40.0f, 40.0f, 40.0f);
+	renderCorals(coral14Vertices, coral14VerticesNormal, coral14Faces, coral14FacesCount, -30.0f, 0.0f, 60.0f, 40.0f, 40.0f, 40.0f);
 }
 
 // Render the grid as a wireframe
 void renderWave() {
 
-	glTranslatef(0, 98, 0);
+	glPushMatrix();
+	glTranslatef(0, 95, 0);
 	glScalef(5, 5, 5);
 
 	setMaterialHelper(blueWater, zeroMaterial, zeroMaterial, noShininess);
@@ -360,10 +400,11 @@ void renderWave() {
 			glEnd();
 		}
 	}
-
+	glPopMatrix();
 }
 
 void renderCoorAxis() {
+
 
 	// white diffuse ball
 	setMaterialHelper(white, zeroMaterial, zeroMaterial, noShininess);
@@ -402,16 +443,6 @@ void renderCoorAxis() {
 
 void renderQuadrics() {
 
-	// set quadric render mode
-	if (isWireFrame) {
-		gluQuadricDrawStyle(cylinder, GLU_LINE);
-		gluQuadricDrawStyle(disk, GLU_LINE);
-	}
-	else {
-		gluQuadricDrawStyle(cylinder, GLU_FILL);
-		gluQuadricDrawStyle(disk, GLU_FILL);
-	}
-
 	// Quadrics shouldn't be affect by lighting
 	gluQuadricNormals(cylinder, GLU_NONE);
 	gluQuadricNormals(disk, GLU_NONE);
@@ -445,7 +476,36 @@ void renderSubmarine() {
 
 	// Set the ship material to yellow and render
 	setMaterialHelper(yellow, zeroMaterial, zeroMaterial, highShininess);
-	for (int i = 0; i < facesCount; i++) {
+	for (int i = 0; i < subFacesCount; i++) {
+
+		// Each vertices has its own normal for smooth shading;
+		glBegin(GL_TRIANGLES);
+		glNormal3f(verticesNormal[faces[i][1] - 1][0], verticesNormal[faces[i][1] - 1][1], verticesNormal[faces[i][1] - 1][2]);
+		glVertex3f(vertices[faces[i][0] - 1][0], vertices[faces[i][0] - 1][1], vertices[faces[i][0] - 1][2]);
+
+		glNormal3f(verticesNormal[faces[i][3] - 1][0], verticesNormal[faces[i][3] - 1][1], verticesNormal[faces[i][3] - 1][2]);
+		glVertex3f(vertices[faces[i][2] - 1][0], vertices[faces[i][2] - 1][1], vertices[faces[i][2] - 1][2]);
+
+		glNormal3f(verticesNormal[faces[i][5] - 1][0], verticesNormal[faces[i][5] - 1][1], verticesNormal[faces[i][5] - 1][2]);
+		glVertex3f(vertices[faces[i][4] - 1][0], vertices[faces[i][4] - 1][1], vertices[faces[i][4] - 1][2]);
+		glEnd();
+	}
+
+	glPopMatrix();
+}
+
+void renderCorals(float vertices[][3], float verticesNormal[][3], int faces[][6], int coralFacesCount,
+				  float translateX, float translateY, float translateZ,
+				  float scaleX, float scaleY, float scaleZ) {
+	glPushMatrix();
+
+	// This will make the ship move with camera
+	glTranslatef(translateX, translateY, translateZ);
+	glScalef(scaleX, scaleY, scaleZ);
+
+	// Set the ship material to yellow and render
+	setMaterialHelper(green, zeroMaterial, zeroMaterial, highShininess);
+	for (int i = 0; i < coralFacesCount; i++) {
 
 		// Each vertices has its own normal for smooth shading;
 		glBegin(GL_TRIANGLES);
