@@ -43,11 +43,11 @@ GLfloat lightPosition[] = { 1.0, 1.0, 1.0, 0.0 };
 GLUquadric* originBall;
 GLUquadric* cylinder;
 GLUquadric* disk;
-int isWireFrame = 0;
+int isWireFrame = 1;
 
 // Boid related variables
 float base = 2.0f;
-float height = 3.0f;
+float height = 4.0f;
 float baseVertices[4][3];
 float topVertices[3];
 

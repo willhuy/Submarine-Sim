@@ -58,21 +58,8 @@ void myKey(unsigned char key, int x, int y) {
 	}
 
 	// Toggle fog
-
 	if (key == 'b') {
 		fogOn = !fogOn;
-	}
-
-	// Move camera up
-	if (key == 'q') {
-		cameraPosition[1] += SHIP_INCREMENT;
-		shipPosition[1]   += SHIP_INCREMENT;
-	}
-
-	// Move camera down
-	if (key == 'e') {
-		cameraPosition[1] -= SHIP_INCREMENT;
-		shipPosition[1]   -= SHIP_INCREMENT;
 	}
 
 	// Move camera left
@@ -131,10 +118,21 @@ void myMouseMotion(int x, int y) {
 }
 
 void mySpecialKey(unsigned char key, int x, int y) {
-	
+	// Move camera up
+	if (key == GLUT_KEY_PAGE_UP) {
+		cameraPosition[1] += SHIP_INCREMENT;
+		shipPosition[1] += SHIP_INCREMENT;
+	}
+
+	// Move camera down
+	if (key == GLUT_KEY_PAGE_DOWN) {
+		cameraPosition[1] -= SHIP_INCREMENT;
+		shipPosition[1] -= SHIP_INCREMENT;
+	}
 }
 
 void update() {
+	updateBoids();
 	waveDelta += WAVE_SPEED;
 	updateWave();
 	glutPostRedisplay();
@@ -224,15 +222,13 @@ void printMenu() {
 	printf("S: Move back\n");
 	printf("D: Move right\n");
 	printf("----------------------\n");
-	printf("Q: Move down\n");
-	printf("E: Move up\n");
+	printf("Page Up: Move down\n");
+	printf("Page Down: Move up\n");
 	printf("----------------------\n");
 	printf("U: Wireframe toggle\n");
 	printf("B: Fog toggle\n");
 	printf("----------------------\n");
-	printf("B: Boid Circling (Method 1)\n");
-	printf("N: Boid Swimming (Method 2)\n");
-	printf("M: Boid flocking (Method 3)\n");
+	printf("Boid flocking (Method 3)\n");
 	printf("----------------------\n");
 	printf("P: Quit\n\n");
 }
@@ -318,7 +314,6 @@ void setMaterialHelper(GLfloat diffuse[], GLfloat specular[], GLfloat ambient[],
 void initScene() {
 
 	// boid
-
 	baseVertices[0][0] = -base / 2.0f;
 	baseVertices[0][1] = 0.0f;
 	baseVertices[0][2] = -base / 2.0f;
@@ -398,8 +393,48 @@ void renderScene() {
 void renderBoids() {
 
 	for (int boidIndex = 0; boidIndex < FLOCK_SIZE; boidIndex++) {
+		// normalize velocity vector
+		float magnitude = findEuclideanDistance(currentFlock[boidIndex].velocity[0], 0.0f, currentFlock[boidIndex].velocity[1], 0.0f, currentFlock[boidIndex].velocity[2], 0.0f);
+		float direction[3] = { -currentFlock[boidIndex].velocity[0] / magnitude, 
+							   -currentFlock[boidIndex].velocity[1] / magnitude, 
+							   -currentFlock[boidIndex].velocity[2] / magnitude };
+
+		// calculate right and up vectors
+		float worldUp[3] = { 0.0f, 1.0f, 0.0f };
+
+		float right[3] = {
+			worldUp[1] * direction[2] - worldUp[2] * direction[1],
+			worldUp[2] * direction[0] - worldUp[0] * direction[2],
+			worldUp[0] * direction[1] - worldUp[1] * direction[0]
+		};
+
+		// noramlize the right vector
+		float rightMagnitude = findEuclideanDistance(right[0], 0.0f, right[1], 0.0f, right[2], 0.0f);
+		right[0] /= rightMagnitude; 
+		right[1] /= rightMagnitude; 
+		right[2] /= rightMagnitude;
+
+		//  up vector
+		float up[3] = {
+			direction[1] * right[2] - direction[2] * right[1],
+			direction[2] * right[0] - direction[0] * right[2],
+			direction[0] * right[1] - direction[1] * right[0],
+		};
+
+		// construct rotation matrix
+		float rotationMatrix[16] = {
+			right[0]     , right[1]     , right[2]     , 0,
+			up[0]        , up[1]        , up[2]        , 0,
+			-direction[0], -direction[1], -direction[2], 0,
+			0            , 0            , 0            , 1
+		};
+
+
 		glPushMatrix();
+
 		glTranslatef(currentFlock[boidIndex].position[0], currentFlock[boidIndex].position[1], currentFlock[boidIndex].position[2]);
+		glRotatef(-90.0f, 1.0f / currentFlock[boidIndex].velocity[0], 1.0f / currentFlock[boidIndex].velocity[1], 1.0f / currentFlock[boidIndex].velocity[2]);
+		glMultMatrixf(rotationMatrix); 
 
 		glBegin(GL_TRIANGLES);
 
